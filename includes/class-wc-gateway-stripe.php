@@ -604,7 +604,7 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway_CC {
 			// Remove cart.
 			WC()->cart->empty_cart();
 
-			add_action( 'wc_gateway_stripe_process_payment', $response, $order );
+			do_action( 'wc_gateway_stripe_process_payment', $response, $order );
 
 			// Return thank you page redirect.
 			return array(
