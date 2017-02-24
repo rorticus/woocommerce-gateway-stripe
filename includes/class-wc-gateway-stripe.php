@@ -702,6 +702,16 @@ class WC_Gateway_Stripe extends WC_Stripe_Payment_Gateway {
 				throw new WC_Stripe_Exception( print_r( $prepared_source->source_object, true ), $localized_message );
 			}
 
+            // we only want to accept payments from US
+            if( !empty($source_object->source) ) {
+                $cardDetails = WC_Stripe_API::request('', 'tokens/' . $source->source, 'GET');
+                if ( $cardDetails && isset($cardDetails->card) && isset($cardDetails->card->country) ) {
+                    if ( $cardDetails->card->country != "US" ) {
+                        throw new Exception("We're sorry. Competition Electronics is not accepting credits cards from other countries at this time. Please contact us for more information.");
+                    }
+                }
+            }
+
 			if ( empty( $prepared_source->source ) ) {
 				$localized_message = __( 'Payment processing failed. Please retry.', 'woocommerce-gateway-stripe' );
 				throw new WC_Stripe_Exception( print_r( $prepared_source, true ), $localized_message );
