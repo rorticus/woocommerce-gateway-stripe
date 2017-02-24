@@ -749,6 +749,16 @@ class WC_Gateway_Stripe extends WC_Payment_Gateway_CC {
 				throw new Exception( $error_msg );
 			}
 
+			// we only want to accept payments from US
+			if( !empty($source->source) ) {
+				$cardDetails = WC_Stripe_API::request('', 'tokens/' . $source->source, 'GET');
+				if ( $cardDetails && isset($cardDetails->card) && isset($cardDetails->card->country) ) {
+					if ( $cardDetails->card->country != "US" ) {
+						throw new Exception("We're sorry. Competition Electronics is not accepting credits cards from other countries at this time. Please contact us for more information.");
+					}
+				}
+			}
+
 			// Store source to order meta.
 			$this->save_source( $order, $source );
 
