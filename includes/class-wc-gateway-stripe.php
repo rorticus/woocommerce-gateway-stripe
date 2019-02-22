@@ -703,11 +703,11 @@ class WC_Gateway_Stripe extends WC_Stripe_Payment_Gateway {
 			}
 
             // we only want to accept payments from US
-            if( !empty($source_object->source) ) {
-                $cardDetails = WC_Stripe_API::request('', 'tokens/' . $source->source, 'GET');
-                if ( $cardDetails && isset($cardDetails->card) && isset($cardDetails->card->country) ) {
-                    if ( $cardDetails->card->country != "US" ) {
-                        throw new Exception("We're sorry. Competition Electronics is not accepting credits cards from other countries at this time. Please contact us for more information.");
+            if( !empty($prepared_source->source_object->card) ) {
+                $cardDetails = $prepared_source->source_object->card;
+                if ( isset($cardDetails->country) ) {
+                    if ( $cardDetails->country != "US" ) {
+                        throw new WC_Stripe_Exception(print_r( $prepared_source->source_object, true ), "We're sorry. Competition Electronics is not accepting credits cards from other countries at this time. Please contact us for more information.");
                     }
                 }
             }
